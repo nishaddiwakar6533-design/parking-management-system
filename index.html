@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Parking Management System</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Welcome Popup -->
+<div id="welcomePopup" class="welcome-overlay">
+    <div class="welcome-box">
+        <div class="welcome-icon">👋</div>
+
+        <h2>Welcome!</h2>
+
+        <p>
+            Diwakar ne bola hai—<br>
+            <b>pehle login karo, phir entry milegi... 😂</b>
+        </p>
+
+        <button onclick="closeWelcomePopup()">Let's Go 🚀</button>
+    </div>
+</div>
+    <!-- =========================
+     LOGIN SCREEN
+========================= -->
+
+<div id="loginScreen" class="login-screen">
+
+    <div class="login-box">
+
+        <div class="login-logo">
+            🚗
+        </div>
+
+        <h1>ParkEase</h1>
+
+        <p>Parking Management System</p>
+
+
+        <form id="loginForm">
+
+            <div class="login-field">
+
+                <label>Username</label>
+
+                <input
+                    type="text"
+                    id="loginUsername"
+                    placeholder="Enter username"
+                    required
+                >
+
+            </div>
+
+
+            <div class="login-field">
+
+                <label>Password</label>
+
+                <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="Enter password"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="login-btn"
+            >
+                🔐 Login
+            </button>
+
+
+            <p
+                id="loginMessage"
+                class="login-message"
+            ></p>
+
+        </form>
+
+    </div>
+
+</div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            🚗
+            <h2>ParkEase</h2>
+            <span>Parking Management</span>
+        </div>
+
+        <nav>
+
+    <a href="#"
+       class="nav-link active"
+       data-section="dashboardSection">
+        🏠 Dashboard
+    </a>
+
+    <a href="#"
+       class="nav-link"
+       data-section="entrySection">
+        🚗 Vehicle Entry
+    </a>
+
+    <a href="#"
+       class="nav-link"
+       data-section="exitSection">
+        🚪 Vehicle Exit
+    </a>
+
+    <a href="#"
+       class="nav-link"
+       data-section="slotSection">
+        🅿️ Slot Status
+    </a>
+
+    <a href="#"
+       class="nav-link"
+       data-section="historySection">
+        📋 Parking History
+    
+    </a>
+    <a href="#"
+   class="nav-link logout-link"
+   id="logoutBtn">
+    ↪️ Logout
+    </a>
+    <div class="admin-profile">
+
+    <div class="admin-avatar">
+        D
+    </div>
+
+    <div class="admin-info">
+
+        <strong>Diwakar Nishad</strong>
+
+        <span>Administrator</span>
+
+    </div>
+
+</div>
+</a>
+
+
+</nav>
+
+    </aside>
+
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+    <section id="dashboardSection" class="active-section">
+        </section>
+
+        <!-- Header -->
+        <header class="header">
+
+            <div>
+                <h1>Dashboard</h1>
+                <p>Welcome to Parking Management System</p>
+            </div>
+
+            <div class="date">
+                📅 <span id="currentDate"></span>
+            </div>
+
+        </header>
+
+        <!-- Vehicle Entry Section -->
+<section id="entrySection" class="entry-section">
+
+    <div class="section-header">
+        <div>
+            <h2>Vehicle Entry</h2>
+            <p>Register a new vehicle in the parking area</p>
+        </div>
+    </div>
+
+    <form id="vehicleEntryForm" class="entry-form">
+
+        <div class="form-group">
+            <label for="vehicleNumber">Vehicle Number</label>
+            <input
+                type="text"
+                id="vehicleNumber"
+                placeholder="e.g. UP65AB1234"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="ownerName">Owner Name</label>
+            <input
+                type="text"
+                id="ownerName"
+                placeholder="Enter owner name"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="vehicleType">Vehicle Type</label>
+
+            <select id="vehicleType" required>
+                <option value="">Select vehicle type</option>
+                <option value="Bike">Bike</option>
+                <option value="Car">Car</option>
+                <option value="Auto">Auto</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="parkingSlot">Parking Slot</label>
+
+            <select id="parkingSlot" required>
+                <option value="">Select available slot</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="entryTime">Entry Time</label>
+
+            <input
+                type="text"
+                id="entryTime"
+                readonly
+            >
+        </div>
+
+        <button type="submit" class="park-btn">
+            🚗 Park Vehicle
+        </button>
+
+    </form>
+
+    <div id="entryMessage"></div>
+
+</section>
+<!-- Vehicle Exit Section -->
+<section id="exitSection" class="exit-section">
+
+    <div class="section-header">
+        <div>
+            <h2>Vehicle Exit</h2>
+            <p>Search vehicle and complete parking exit</p>
+        </div>
+    </div>
+
+    <div class="exit-search">
+
+        <input
+            type="text"
+            id="exitVehicleNumber"
+            placeholder="Enter vehicle number e.g. UP65AB1234"
+        >
+
+        <button
+            type="button"
+            id="searchVehicleBtn"
+            class="search-btn"
+        >
+            🔍 Search Vehicle
+        </button>
+
+    </div>
+
+
+    <!-- Vehicle Details -->
+
+    <div
+        id="exitDetails"
+        class="exit-details"
+        style="display: none;"
+    >
+
+        <div class="exit-info">
+
+            <div>
+                <span>Vehicle Number</span>
+                <strong id="exitVehicleNo">-</strong>
+            </div>
+
+            <div>
+                <span>Owner Name</span>
+                <strong id="exitOwnerName">-</strong>
+            </div>
+
+            <div>
+                <span>Vehicle Type</span>
+                <strong id="exitVehicleType">-</strong>
+            </div>
+
+            <div>
+                <span>Parking Slot</span>
+                <strong id="exitSlot">-</strong>
+            </div>
+
+            <div>
+                <span>Entry Time</span>
+                <strong id="exitEntryTime">-</strong>
+            </div>
+
+            <div>
+                <span>Exit Time</span>
+                <strong id="exitTime">-</strong>
+            </div>
+
+            <div>
+                <span>Duration</span>
+                <strong id="parkingDuration">-</strong>
+            </div>
+
+            <div class="fee-box">
+                <span>Parking Fee</span>
+                <strong id="parkingFee">₹0</strong>
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            id="completeExitBtn"
+            class="exit-btn"
+        >
+            🚪 Complete Vehicle Exit
+        </button>
+
+    </div>
+
+
+    <div id="exitMessage"></div>
+
+</section>
+
+
+        <!-- Statistics -->
+        <section class="stats">
+
+            <div class="stat-card">
+                <div class="stat-icon">🅿️</div>
+                <div>
+                    <h3>Total Slots</h3>
+                    <strong id="totalSlots">20</strong>
+                </div>
+            </div>
+
+            <div class="stat-card occupied">
+                <div class="stat-icon">🚗</div>
+                <div>
+                    <h3>Occupied</h3>
+                    <strong id="occupiedSlots">0</strong>
+                </div>
+            </div>
+
+            <div class="stat-card available">
+                <div class="stat-icon">✅</div>
+                <div>
+                    <h3>Available</h3>
+                    <strong id="availableSlots">20</strong>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div>
+                    <h3>Today's Collection</h3>
+                    <strong id="collection">₹0</strong>
+                </div>
+            </div>
+
+        </section>
+        
+        <!-- Quick Actions -->
+
+<div class="quick-actions">
+
+    <h2>Quick Actions</h2>
+
+    <div class="quick-action-buttons">
+
+        <button
+            type="button"
+            class="quick-btn"
+            data-go-section="entrySection"
+        >
+            🚗 New Vehicle Entry
+        </button>
+
+        <button
+            type="button"
+            class="quick-btn"
+            data-go-section="exitSection"
+        >
+            🚪 Vehicle Exit
+        </button>
+
+        <button
+            type="button"
+            class="quick-btn"
+            data-go-section="slotSection"
+        >
+            🅿️ View Parking Slots
+        </button>
+
+    </div>
+
+</div>
+
+
+        <!-- Parking Slots -->
+        <div
+    id="parkingAlert"
+    class="parking-alert"
+>
+</div>
+        <section class="parking-section">
+
+            <div class="section-header">
+                <div>
+                    <h2>Parking Slots</h2>
+                    <p>Current parking availability</p>
+                </div>
+
+                <div class="legend">
+                    <span>
+                        <i class="available-dot"></i>
+                        Available
+                    </span>
+
+                    <span>
+                        <i class="occupied-dot"></i>
+                        Occupied
+                    </span>
+                </div>
+            </div>
+
+
+            <div class="slots" id="parkingSlots">
+
+                <!-- Slots JavaScript se generate honge -->
+
+            </div>
+
+        </section>
+
+
+        <!-- Recent Parking -->
+        <section class="recent-section">
+
+            <div class="section-header">
+                <div>
+                    <h2>Recent Parking</h2>
+                    <p>Latest vehicle records</p>
+                </div>
+
+                <button class="view-btn">
+                    View All
+                </button>
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Vehicle No.</th>
+                            <th>Vehicle Type</th>
+                            <th>Slot</th>
+                            <th>Entry Time</th>
+                            <th>Status</th>
+                            
+                        </tr>
+                    </thead>
+
+                    <tbody id="recentParking">
+
+                        <tr>
+                            <td colspan="5" class="empty">
+                                No parking records available
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    <!-- Slot Status Section -->
+<section id="slotSection" class="slot-status-section">
+    
+
+    <div class="section-header">
+
+        <div>
+            <h2>Parking Slot Status</h2>
+            <p>View all parking slots and their current status</p>
+        </div>
+
+    </div>
+
+
+    <!-- Slot Summary -->
+
+    <div class="slot-summary">
+
+        <div class="slot-summary-card">
+
+            <span>🅿️ Total Slots</span>
+
+            <strong id="slotTotal">
+                20
+            </strong>
+
+        </div>
+
+
+        <div class="slot-summary-card">
+
+            <span>🔴 Occupied</span>
+
+            <strong id="slotOccupied">
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="slot-summary-card">
+
+            <span>🟢 Available</span>
+
+            <strong id="slotAvailable">
+                20
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- All Parking Slots -->
+
+    <div
+        class="full-slots"
+        id="fullSlots"
+    >
+
+        <!-- Slots JavaScript se generate honge -->
+
+    </div>
+    </section>
+
+<!-- Parking History Section -->
+<section id="historySection" class="history-section">
+
+    <div class="section-header">
+
+        <div>
+            <h2>Parking History</h2>
+            <p>View all previous parking records</p>
+        </div>
+
+    </div>
+
+
+    <!-- Search -->
+    <div class="history-search">
+
+        <input
+            type="text"
+            id="historySearch"
+            placeholder="🔍 Search vehicle number or owner name"
+        >
+        <select id="historyStatusFilter">
+    <option value="All">All Status</option>
+    <option value="Parked">Parked</option>
+    <option value="Completed">Completed</option>
+</select>
+
+    </div>
+    <button
+    id="clearHistoryBtn"
+    class="clear-history-btn"
+>
+    🗑️ Clear History
+</button>
+
+
+    <!-- History Table -->
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Vehicle No.</th>
+                    <th>Owner</th>
+                    <th>Type</th>
+                    <th>Slot</th>
+                    <th>Entry Time</th>
+                    <th>Exit Time</th>
+                    <th>Duration</th>
+                    <th>Fee</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+
+            </thead>
+
+
+            <tbody id="historyTableBody">
+
+                <tr>
+                    <td colspan="9" class="empty">
+                        No parking history available
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+    
+    </main>
+
+
+    <script src="script.js"></script>
+    <!-- =========================
+     VEHICLE DETAILS MODAL
+========================= -->
+
+<div
+    id="vehicleDetailsModal"
+    class="vehicle-modal"
+>
+
+    <div class="vehicle-modal-box">
+
+        <div class="vehicle-modal-header">
+
+            <div>
+                <h2>Vehicle Details</h2>
+                <p>Complete parking information</p>
+            </div>
+
+            <button
+                type="button"
+                id="closeVehicleModal"
+                class="close-modal"
+            >
+                ✕
+            </button>
+
+        </div>
+
+
+        <div
+            id="vehicleDetailsContent"
+            class="vehicle-details-content"
+        >
+            <!-- Details JavaScript se aayengi -->
+        </div>
+
+
+        <button
+            type="button"
+            id="closeVehicleModalBottom"
+            class="modal-close-btn"
+        >
+            Close
+        </button>
+
+    </div>
+
+</div>
+
+<!-- =========================
+     PARKING RECEIPT MODAL
+========================= -->
+
+<div
+    id="parkingReceiptModal"
+    class="vehicle-modal"
+>
+
+    <div class="vehicle-modal-box receipt-box">
+
+        <div class="vehicle-modal-header">
+
+            <div>
+                <h2>Parking Receipt</h2>
+                <p>ParkEase Parking Management System</p>
+            </div>
+
+            <button
+                type="button"
+                id="closeReceiptModal"
+                class="close-modal"
+            >
+                ✕
+            </button>
+
+        </div>
+
+
+        <div id="parkingReceiptContent">
+
+            <!-- Receipt JavaScript se generate hogi -->
+
+        </div>
+
+
+        <div class="receipt-actions">
+
+            <button
+                type="button"
+                id="printReceiptBtn"
+                class="print-receipt-btn"
+            >
+                🖨️ Print Receipt
+            </button>
+
+            <button
+                type="button"
+                id="closeReceiptBtn"
+                class="modal-close-btn"
+            >
+                Close
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+</body>
+</html>

@@ -2550,3 +2550,86 @@ function closeWelcomePopup() {
         popup.style.display = "none";
     }, 400);
 }
+/* ===== Scroll Reveal ===== */
+
+const revealElements = document.querySelectorAll(
+    "section, .card, .parking-card, .feature-card, .stat-card, .info-card, .content-card"
+);
+
+const revealObserver = new IntersectionObserver(
+    (entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("scroll-reveal");
+                
+                // Small delay so animation starts smoothly
+                setTimeout(() => {
+                    entry.target.classList.add("show");
+                }, 50);
+
+                // Ek baar animation ke baad dobara nahi chalega
+                revealObserver.unobserve(entry.target);
+            }
+        });
+    },
+    {
+        threshold: 0.15
+    }
+);
+
+revealElements.forEach((element) => {
+    // Login aur popup ko scroll animation se exclude karo
+    if (
+        !element.closest(".login-screen") &&
+        !element.closest(".welcome-overlay")
+    ) {
+        element.classList.add("scroll-reveal");
+        revealObserver.observe(element);
+    }
+});
+/* ===== Statistics Number Animation ===== */
+
+const statsSection = document.querySelector(".stats");
+let statsAnimated = false;
+
+const statsObserver = new IntersectionObserver((entries) => {
+
+    if (entries[0].isIntersecting && !statsAnimated) {
+
+        statsAnimated = true;
+
+        document.querySelectorAll(".counter").forEach(counter => {
+
+            const target = parseInt(counter.dataset.target);
+            let current = 0;
+
+            const duration = 1000;
+            const steps = 40;
+            const increment = target / steps;
+            const interval = duration / steps;
+
+            const timer = setInterval(() => {
+
+                current += increment;
+
+                if (current >= target) {
+                    counter.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    counter.textContent = Math.floor(current);
+                }
+
+            }, interval);
+
+        });
+
+        statsObserver.disconnect();
+    }
+
+}, {
+    threshold: 0.3
+});
+
+if (statsSection) {
+    statsObserver.observe(statsSection);
+}

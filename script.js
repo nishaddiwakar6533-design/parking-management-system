@@ -20,12 +20,107 @@ currentDate.textContent =
 
 const totalSlots = 20;
 
-let parkingData =
-    JSON.parse(localStorage.getItem("parkingData")) || [];
+let parkingData = [];
 
-const parkingSlots =
-    document.getElementById("parkingSlots");
+// =========================
+// LOAD PARKING DATA FROM DATABASE
+// =========================
 
+async function loadParkingData() {
+
+    try {
+
+        const savedUser =
+            localStorage.getItem("parkEaseUser");
+
+        if (!savedUser) {
+            console.log("⚠️ User not logged in.");
+            return;
+        }
+
+        const currentUser =
+            JSON.parse(savedUser);
+
+        if (!currentUser.id) {
+            console.error("❌ User ID not found.");
+            return;
+        }
+
+        console.log(
+            "👤 Loading parking data for user:",
+            currentUser.id
+        );
+
+        const response = await fetch(
+            `http://10.131.50.69:3000/api/parking?user_id=${currentUser.id}`
+        );
+
+        const result = await response.json();
+
+        if (!result.success) {
+            console.error(
+                "❌ Failed to load parking data:",
+                result.message
+            );
+            return;
+        }
+
+        parkingData = (result.data || []).map(vehicle => ({
+
+            id: vehicle.id,
+
+            receiptId:
+                vehicle.receipt_id,
+
+            vehicleNumber:
+                vehicle.vehicle_number,
+
+            ownerName:
+                vehicle.owner_name,
+
+            vehicleType:
+                vehicle.vehicle_type,
+
+            slot:
+                vehicle.slot,
+
+            entryTime:
+                vehicle.entry_time,
+
+            exitTime:
+                vehicle.exit_time,
+
+            duration:
+                vehicle.duration,
+
+            parkingFee:
+                vehicle.parking_fee,
+
+            status:
+                vehicle.status
+
+        }));
+
+        console.log(
+            "✅ Parking data loaded from MySQL:",
+            parkingData
+        );
+
+        displaySlots();
+        displayRecentParking();
+        loadAvailableSlots();
+        updateStats();
+        displayHistory();
+
+    } catch (error) {
+
+        console.error(
+            "❌ Database connection error:",
+            error
+        );
+
+    }
+}
 
 // =========================
 // DISPLAY SLOTS
@@ -461,8 +556,7 @@ function displayRecentParking() {
 // LOAD DASHBOARD
 // =========================
 
-displaySlots();
-displayRecentParking();
+
 // =========================
 // VEHICLE ENTRY
 // =========================
@@ -537,7 +631,7 @@ function loadAvailableSlots() {
     }
 }
 
-loadAvailableSlots();
+
 
 
 // =========================
@@ -830,6 +924,91 @@ if (!slot) {
                 parkingData
             )
         );
+        // =========================
+// SAVE TO DATABASE
+// =========================
+
+const savedUser =
+    localStorage.getItem("parkEaseUser");
+
+if (!savedUser) {
+
+    console.error("❌ User not logged in.");
+
+} else {
+
+    const currentUser =
+        JSON.parse(savedUser);
+
+    fetch("http://10.131.50.69:3000/api/parking", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+            user_id: currentUser.id,
+
+            receipt_id:
+                "REC-" + newVehicle.id,
+
+            vehicle_number:
+                newVehicle.vehicleNumber,
+
+            owner_name:
+                newVehicle.ownerName,
+
+            vehicle_type:
+                newVehicle.vehicleType,
+
+            slot:
+                newVehicle.slot,
+
+            entry_time:
+                newVehicle.entryTime,
+
+            exit_time:
+                null,
+
+            duration:
+                "",
+
+            parking_fee:
+                0,
+
+            status:
+                "Parked"
+
+        })
+
+    })
+
+    .then(response =>
+        response.json()
+    )
+
+    .then(data => {
+
+        console.log(
+            "✅ Database response:",
+            data
+        );
+
+    })
+
+    .catch(error => {
+
+        console.error(
+            "❌ Database error:",
+            error
+        );
+
+    });
+
+}
 
 
         // =========================
@@ -1399,116 +1578,145 @@ completeExitBtn.addEventListener(
 );
 
 
-function completeVehicleExit() {
+async function completeVehicleExit() {
 
     if (!selectedVehicle) {
-
         showExitMessage(
             "Please search a vehicle first.",
             "error"
         );
-
         return;
     }
 
+    const exitDate = new Date();
 
-    const exitDate =
-        new Date();
+    const entryDate = parseEntryTime(
+        selectedVehicle.entryTime
+    );
 
+    const duration = calculateDuration(
+        entryDate,
+        exitDate
+    );
 
-    const entryDate =
-        parseEntryTime(
-            selectedVehicle.entryTime
-        );
-
-
-    const duration =
-        calculateDuration(
-            entryDate,
-            exitDate
-        );
-
-
-    const fee =
-    calculateParkingFee(
+    const fee = calculateParkingFee(
         duration.hours,
         selectedVehicle.vehicleType
     );
 
+    // MySQL DATETIME format
+    const mysqlExitTime =
+        exitDate.toISOString()
+            .slice(0, 19)
+            .replace("T", " ");
 
-    // Update record
+    // =========================
+    // UPDATE MYSQL DATABASE
+    // =========================
 
-    selectedVehicle.exitTime =
-        exitDate.toLocaleString(
-            "en-IN",
-            {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit"
-            }
-        );
+    try {
 
+        const savedUser = localStorage.getItem("parkEaseUser");
 
-    selectedVehicle.duration =
-        duration.text;
-
-
-    selectedVehicle.parkingFee =
-        fee;
-
-
-    selectedVehicle.status =
-        "Completed";
-
-
-    // Save LocalStorage
-
-    localStorage.setItem(
-        "parkingData",
-        JSON.stringify(
-            parkingData
-        )
-    );
-
-
-    // Update dashboard
-
-    displaySlots();
-
-    displayRecentParking();
-
-    loadAvailableSlots();
-    
-    updateStats();
-
-    displayHistory();
-
-
-    // Hide details
-
-    document.getElementById(
-        "exitDetails"
-    ).style.display = "none";
-
-
-    document.getElementById(
-        "exitVehicleNumber"
-    ).value = "";
-
-
-    selectedVehicle = null;
-
-
-    showExitMessage(
-        `Vehicle exit completed successfully. Parking Fee: ₹${fee}`,
-        "success"
-    );
-
+if (!savedUser) {
+    throw new Error("User login information not found.");
 }
 
+const currentUser = JSON.parse(savedUser);
 
+if (!currentUser.id) {
+    throw new Error("User ID not found.");
+}
+
+const response = await fetch(
+    `http://10.131.50.69:3000/api/parking/${selectedVehicle.id}`,
+    {
+        method: "PUT",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            user_id: currentUser.id,
+            exit_time: mysqlExitTime,
+            duration: duration.text,
+            parking_fee: fee,
+            status: "Completed"
+        })
+    }
+);
+        
+
+        // =========================
+        // UPDATE LOCAL RECORD
+        // =========================
+
+        selectedVehicle.exitTime =
+            exitDate.toLocaleString(
+                "en-IN",
+                {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }
+            );
+
+        selectedVehicle.duration =
+            duration.text;
+
+        selectedVehicle.parkingFee =
+            fee;
+
+        selectedVehicle.status =
+            "Completed";
+
+        localStorage.setItem(
+            "parkingData",
+            JSON.stringify(parkingData)
+        );
+
+        // =========================
+        // REFRESH DASHBOARD
+        // =========================
+
+        displaySlots();
+        displayRecentParking();
+        
+        updateStats();
+        displayHistory();
+
+        // Hide details
+        document.getElementById(
+            "exitDetails"
+        ).style.display = "none";
+
+        document.getElementById(
+            "exitVehicleNumber"
+        ).value = "";
+
+        selectedVehicle = null;
+
+        showExitMessage(
+            `Vehicle exit completed successfully. Parking Fee: ₹${fee}`,
+            "success"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "❌ Exit database error:",
+            error
+        );
+
+        showExitMessage(
+            "Vehicle exit failed. Database update nahi hua.",
+            "error"
+        );
+    }
+}
 // =========================
 // EXIT MESSAGE
 // =========================
@@ -1999,102 +2207,7 @@ if (clearHistoryBtn) {
 
 }
 
-// =========================
-// ADMIN LOGIN
-// =========================
 
-const loginForm =
-    document.getElementById("loginForm");
-
-const loginScreen =
-    document.getElementById("loginScreen");
-
-const loginMessage =
-    document.getElementById("loginMessage");
-
-
-if (loginForm) {
-
-    loginForm.addEventListener(
-        "submit",
-        function(event) {
-
-            event.preventDefault();
-
-
-            const username =
-                document.getElementById(
-                    "loginUsername"
-                ).value.trim();
-
-            const password =
-                document.getElementById(
-                    "loginPassword"
-                ).value;
-
-
-            // Demo login credentials
-            const correctUsername =
-                "diwakar";
-
-            const correctPassword =
-                "diwakar4923";
-
-
-            if (
-                username === correctUsername &&
-                password === correctPassword
-            ) {
-
-                // Save login state
-                localStorage.setItem(
-                    "parkEaseLoggedIn",
-                    "true"
-                );
-
-
-                // Hide login screen
-                loginScreen.style.display =
-                    "none";
-
-
-                loginMessage.textContent =
-                    "";
-
-            } else {
-
-                loginMessage.textContent =
-                    "❌ Invalid username or password.";
-
-                loginMessage.style.color =
-                    "#dc2626";
-
-            }
-
-        }
-    );
-
-}
-
-
-// =========================
-// CHECK LOGIN
-// =========================
-
-if (
-    localStorage.getItem(
-        "parkEaseLoggedIn"
-    ) === "true"
-) {
-
-    if (loginScreen) {
-
-        loginScreen.style.display =
-            "none";
-
-    }
-
-}
 // =========================
 // LOGOUT
 // =========================
@@ -2124,40 +2237,18 @@ if (logoutBtn) {
                 "parkEaseLoggedIn"
             );
 
-            // Show login screen
-            const loginScreen =
-                document.getElementById(
-                    "loginScreen"
-                );
+            localStorage.removeItem(
+                "parkEaseUser"
+            );
 
-            if (loginScreen) {
-                loginScreen.style.display =
-                    "flex";
-            }
-
-            // Clear login fields
-            const usernameInput =
-                document.getElementById(
-                    "loginUsername"
-                );
-
-            const passwordInput =
-                document.getElementById(
-                    "loginPassword"
-                );
-
-            if (usernameInput) {
-                usernameInput.value = "";
-            }
-
-            if (passwordInput) {
-                passwordInput.value = "";
-            }
-
+            // Go back to login page
+            window.location.href =
+                "login.html";
         }
     );
 
 }
+
 // =========================
 // QUICK ACTIONS
 // =========================
@@ -2560,7 +2651,7 @@ const revealObserver = new IntersectionObserver(
     (entries) => {
         entries.forEach((entry) => {
             if (entry.isIntersecting) {
-                entry.target.classList.add("scroll-reveal");
+                
                 
                 // Small delay so animation starts smoothly
                 setTimeout(() => {
@@ -2633,3 +2724,55 @@ const statsObserver = new IntersectionObserver((entries) => {
 if (statsSection) {
     statsObserver.observe(statsSection);
 }
+// =========================
+// INITIALIZE DATABASE DATA
+// =========================
+
+loadParkingData();
+// =========================
+// AUTO SYNC DATABASE
+// =========================
+// =========================
+// AUTO SYNC FROM MYSQL
+// =========================
+
+setInterval(async () => {
+    try {
+        const savedUser = localStorage.getItem("parkEaseUser");
+
+        if (!savedUser) return;
+
+        const currentUser = JSON.parse(savedUser);
+
+        const response = await fetch(
+            `http://10.131.50.69:3000/api/parking?user_id=${currentUser.id}`
+        );
+
+        const result = await response.json();
+
+        if (!result.success) return;
+
+        parkingData = (result.data || []).map(vehicle => ({
+            id: vehicle.id,
+            receiptId: vehicle.receipt_id,
+            vehicleNumber: vehicle.vehicle_number,
+            ownerName: vehicle.owner_name,
+            vehicleType: vehicle.vehicle_type,
+            slot: vehicle.slot,
+            entryTime: vehicle.entry_time,
+            exitTime: vehicle.exit_time,
+            duration: vehicle.duration,
+            parkingFee: vehicle.parking_fee,
+            status: vehicle.status
+        }));
+
+        // Screen update only
+        displaySlots();
+        displayRecentParking();
+        updateStats();
+        displayHistory();
+
+    } catch (error) {
+        console.error("Auto sync error:", error);
+    }
+}, 5000);

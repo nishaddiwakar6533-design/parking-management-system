@@ -7,103 +7,50 @@
     <title>Parking Management System</title>
 
     <link rel="stylesheet" href="style.css">
+
+<style>
+.modern-icon,.stat-icon svg,.side-icon svg{
+ width:22px;height:22px;display:inline-block;flex:0 0 auto;
+ stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+}
+.side-icon{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;margin-right:9px;color:#8b7cff;vertical-align:middle}
+.nav-link.active .side-icon,.nav-link:hover .side-icon{color:#fff}
+.quick-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.quick-btn .modern-icon{color:#4f46e5;transition:.2s ease}
+.quick-btn:hover .modern-icon{transform:scale(1.08);filter:drop-shadow(0 0 6px rgba(99,102,241,.45))}
+.stat-icon{display:inline-flex;align-items:center;justify-content:center}
+.stat-icon svg{width:27px;height:27px}
+.stat-card:nth-child(1) .stat-icon{color:#2563eb}
+.stat-card:nth-child(2) .stat-icon{color:#ef4444}
+.stat-card:nth-child(3) .stat-icon{color:#16a34a}
+.stat-card:nth-child(4) .stat-icon{color:#f59e0b}
+</style>
 </head>
 
 <body>
 
-    <!-- Welcome Popup -->
-<div id="welcomePopup" class="welcome-overlay">
-    <div class="welcome-box">
-        <div class="welcome-icon">👋</div>
-
-        <h2>Welcome!</h2>
-
-        <p>
-            Diwakar ne bola hai—<br>
-            <b>pehle login karo, phir entry milegi... 😂</b>
-        </p>
-
-        <button onclick="closeWelcomePopup()">Let's Go 🚀</button>
-    </div>
-</div>
-    <!-- =========================
-     LOGIN SCREEN
-========================= -->
-
-<div id="loginScreen" class="login-screen">
-    <div class="developer-credit">
-    <span>Developed by :</span>
-    <strong>Diwakar Nishad</strong>
-    
-</div>
-
-    <div class="login-box">
-
-        <div class="login-logo">
-            🚗
-            
-        </div>
-
-        <h1>ParkEase</h1>
-
-        <p>Parking Management System</p>
-
-
-        <form id="loginForm">
-
-            <div class="login-field">
-
-                <label>Username</label>
-
-                <input
-                    type="text"
-                    id="loginUsername"
-                    placeholder="Enter username"
-                    required
-                >
-
-            </div>
-
-
-            <div class="login-field">
-
-                <label>Password</label>
-
-                <input
-                    type="password"
-                    id="loginPassword"
-                    placeholder="Enter password"
-                    required
-                >
-
-            </div>
-
-
-            <button
-                type="submit"
-                class="login-btn"
-            >
-                🔐 Login
-            </button>
-
-
-            <p
-                id="loginMessage"
-                class="login-message"
-            ></p>
-
-        </form>
-
-    </div>
-
-</div>
 
     <!-- Sidebar -->
     <aside class="sidebar">
 
         <div class="logo">
-            🚗
-            <h2>ParkEase</h2>
+            <div class="brand-logo">
+    <div class="brand-icon">
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+            <path d="M10 27l3-9c.6-1.8 2.3-3 4.2-3h13.6c1.9 0 3.6 1.2 4.2 3l3 9"/>
+            <rect x="7" y="25" width="34" height="12" rx="4"/>
+            <circle cx="14" cy="37" r="3"/>
+            <circle cx="34" cy="37" r="3"/>
+            <path d="M14 24h20"/>
+            <path d="M18 18h12"/>
+        </svg>
+    </div>
+
+    <div class="brand-name">
+        <span>Park</span><b>Ease</b>
+    </div>
+</div>
+            
             <span>Parking Management</span>
         </div>
 
@@ -112,31 +59,31 @@
     <a href="#"
        class="nav-link active"
        data-section="dashboardSection">
-        🏠 Dashboard
+        <span class="side-icon"><svg viewBox="0 0 24 24" class="modern-icon" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg></span>Dashboard
     </a>
 
     <a href="#"
        class="nav-link"
        data-section="entrySection">
-        🚗 Vehicle Entry
+        <span class="side-icon"><svg viewBox="0 0 24 24" class="modern-icon" aria-hidden="true"><path d="M3 13h2l2-5h9l3 5h2"/><path d="M5 13v4h2"/><path d="M19 13v4h-2"/><circle cx="7.5" cy="16.5" r="1.5"/><circle cx="16.5" cy="16.5" r="1.5"/></svg></span>Vehicle Entry
     </a>
 
     <a href="#"
        class="nav-link"
        data-section="exitSection">
-        🚪 Vehicle Exit
+        <span class="side-icon"><svg viewBox="0 0 24 24" class="modern-icon" aria-hidden="true"><path d="M4 4h10v16H4z"/><path d="M14 12h7"/><path d="m18 8 4 4-4 4"/></svg></span>Vehicle Exit
     </a>
 
     <a href="#"
        class="nav-link"
        data-section="slotSection">
-        🅿️ Slot Status
+        <span class="side-icon"><svg viewBox="0 0 24 24" class="modern-icon" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 8h3.5a3 3 0 0 1 0 6H9"/><path d="M9 8v9"/></svg></span>Slot Status
     </a>
 
     <a href="#"
        class="nav-link"
        data-section="historySection">
-        📋 Parking History
+        <span class="side-icon"><svg viewBox="0 0 24 24" class="modern-icon" aria-hidden="true"><rect x="4" y="4" width="16" height="17" rx="2"/><path d="M8 2v4M16 2v4M4 9h16M8 13h3M8 17h5"/></svg></span>Parking History
     
     </a>
     <a href="#"
@@ -174,7 +121,7 @@
         </section>
 
         <!-- Header -->
-        <header class="header">
+        <header class="header scroll-reveal">
 
             <div>
                 <h1>Dashboard</h1>
@@ -250,7 +197,7 @@
         </div>
 
         <button type="submit" class="park-btn">
-            🚗 Park Vehicle
+            <span class="modern-icon" aria-hidden="true"><svg viewBox="0 0 24 24" class="modern-icon" aria-hidden="true"><path d="M3 13h2l2-5h9l3 5h2"/><path d="M5 13v4h2"/><path d="M19 13v4h-2"/><circle cx="7.5" cy="16.5" r="1.5"/><circle cx="16.5" cy="16.5" r="1.5"/></svg></span>Park Vehicle
         </button>
 
     </form>
@@ -281,7 +228,7 @@
             id="searchVehicleBtn"
             class="search-btn"
         >
-            🔍 Search Vehicle
+            <span class="modern-icon" aria-hidden="true"><svg viewBox="0 0 24 24" class="modern-icon" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m16 16 5 5"/></svg></span>Search Vehicle
         </button>
 
     </div>
@@ -345,7 +292,7 @@
             id="completeExitBtn"
             class="exit-btn"
         >
-            🚪 Complete Vehicle Exit
+            <span class="modern-icon" aria-hidden="true"><svg viewBox="0 0 24 24" class="modern-icon" aria-hidden="true"><path d="M4 4h10v16H4z"/><path d="M14 12h7"/><path d="m18 8 4 4-4 4"/></svg></span>Complete Vehicle Exit
         </button>
 
     </div>
@@ -357,10 +304,10 @@
 
 
         <!-- Statistics -->
-        <section class="stats">
+        <section class="stats scroll-reveal">
 
             <div class="stat-card">
-                <div class="stat-icon">🅿️</div>
+                <div class="stat-icon"><svg viewBox="0 0 24 24" class="modern-icon" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 8h3.5a3 3 0 0 1 0 6H9"/><path d="M9 8v9"/></svg></div>
                 <div>
                     <h3>Total Slots</h3>
                     
@@ -370,7 +317,7 @@
             </div>
 
             <div class="stat-card occupied">
-                <div class="stat-icon">🚗</div>
+                <div class="stat-icon"><svg viewBox="0 0 24 24" class="modern-icon" aria-hidden="true"><path d="M3 13h2l2-5h9l3 5h2"/><path d="M5 13v4h2"/><path d="M19 13v4h-2"/><circle cx="7.5" cy="16.5" r="1.5"/><circle cx="16.5" cy="16.5" r="1.5"/></svg></div>
                 <div>
                     <h3>Occupied</h3>
                     <strong id="occupiedSlots" class="counter" data-target="0">0</strong>
@@ -378,7 +325,7 @@
             </div>
 
             <div class="stat-card available">
-                <div class="stat-icon">✅</div>
+                <div class="stat-icon"><svg viewBox="0 0 24 24" class="modern-icon" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg></div>
                 <div>
                     <h3>Available</h3>
                     <strong id="availableSlots" class="counter" data-target="20">20</strong>
@@ -386,7 +333,7 @@
             </div>
 
             <div class="stat-card">
-                <div class="stat-icon">💰</div>
+                <div class="stat-icon"><svg viewBox="0 0 24 24" class="modern-icon" aria-hidden="true"><path d="M6 4h12v16H6z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></div>
                 <div>
                     <h3>Today's Collection</h3>
                     <strong id="collection">₹0</ class="counter" data-target="10000000">10000000000000</strong>
@@ -397,7 +344,7 @@
         
         <!-- Quick Actions -->
 
-<div class="quick-actions">
+<div class="quick-actions scroll-reveal">
 
     <h2>Quick Actions</h2>
 
@@ -408,7 +355,7 @@
             class="quick-btn"
             data-go-section="entrySection"
         >
-            🚗 New Vehicle Entry
+            <span class="modern-icon" aria-hidden="true"><svg viewBox="0 0 24 24" class="modern-icon" aria-hidden="true"><path d="M3 13h2l2-5h9l3 5h2"/><path d="M5 13v4h2"/><path d="M19 13v4h-2"/><circle cx="7.5" cy="16.5" r="1.5"/><circle cx="16.5" cy="16.5" r="1.5"/></svg></span>New Vehicle Entry
         </button>
 
         <button
@@ -416,7 +363,7 @@
             class="quick-btn"
             data-go-section="exitSection"
         >
-            🚪 Vehicle Exit
+            <span class="modern-icon" aria-hidden="true"><svg viewBox="0 0 24 24" class="modern-icon" aria-hidden="true"><path d="M4 4h10v16H4z"/><path d="M14 12h7"/><path d="m18 8 4 4-4 4"/></svg></span>Vehicle Exit
         </button>
 
         <button
@@ -424,7 +371,7 @@
             class="quick-btn"
             data-go-section="slotSection"
         >
-            🅿️ View Parking Slots
+            <span class="modern-icon" aria-hidden="true"><svg viewBox="0 0 24 24" class="modern-icon" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 8h3.5a3 3 0 0 1 0 6H9"/><path d="M9 8v9"/></svg></span>View Parking Slots
         </button>
 
     </div>
@@ -438,7 +385,7 @@
     class="parking-alert"
 >
 </div>
-        <section class="parking-section">
+        <section class="parking-section scroll-reveal">
 
             <div class="section-header">
                 <div>
@@ -470,7 +417,7 @@
 
 
         <!-- Recent Parking -->
-        <section class="recent-section">
+        <section class="recent-section scroll-reveal">
 
             <div class="section-header">
                 <div>
@@ -659,7 +606,7 @@
     </main>
 
 
-    <script src="script.js"></script>
+    <script src="script.js?v=2"></script>
     <!-- =========================
      VEHICLE DETAILS MODAL
 ========================= -->

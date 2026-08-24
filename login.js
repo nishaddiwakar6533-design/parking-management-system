@@ -69,7 +69,7 @@ loginForm.addEventListener(
 
             const response =
                 await fetch(
-                    "http://10.131.50.69:3000/api/auth/login",
+                    "https://parking-management-system-production-7ce8.up.railway.app/api/auth/login",
                     {
                         method: "POST",
 

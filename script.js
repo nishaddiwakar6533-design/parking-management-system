@@ -22,6 +22,9 @@ const totalSlots = 20;
 
 let parkingData = [];
 
+const API_BASE_URL =
+    "https://parking-management-system-production-7ce8.up.railway.app";
+
 // =========================
 // LOAD PARKING DATA FROM DATABASE
 // =========================
@@ -52,7 +55,7 @@ async function loadParkingData() {
         );
 
         const response = await fetch(
-            'https://parking-management-system-production-7ce8.up.railway.app'
+            `${API_BASE_URL}/api/parking?user_id=${currentUser.id}`
         );
 
         const result = await response.json();
@@ -940,7 +943,7 @@ if (!savedUser) {
     const currentUser =
         JSON.parse(savedUser);
 
-    fetch("https://parking-management-system-production-7ce8.up.railway.app/api/parking", {
+    fetch(`${API_BASE_URL}/api/parking`, {
 
         method: "POST",
 
@@ -986,11 +989,25 @@ if (!savedUser) {
 
     })
 
-    .then(response =>
-        response.json()
-    )
+    .then(async response => {
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Vehicle could not be saved");
+        }
+
+        return data;
+    })
 
     .then(data => {
+
+        // Use the MySQL record ID for later vehicle-exit updates.
+        newVehicle.id = data.id;
+
+        localStorage.setItem(
+            "parkingData",
+            JSON.stringify(parkingData)
+        );
 
         console.log(
             "✅ Database response:",
@@ -1629,7 +1646,7 @@ if (!currentUser.id) {
 }
 
 const response = await fetch(
-    `fetch("https://parking-management-system-production-7ce8.up.railway.app")`,
+    `${API_BASE_URL}/api/parking/${selectedVehicle.id}`,
     {
         method: "PUT",
 
@@ -1646,6 +1663,14 @@ const response = await fetch(
         })
     }
 );
+
+const updateResult = await response.json();
+
+if (!response.ok || !updateResult.success) {
+    throw new Error(
+        updateResult.message || "Vehicle exit could not be saved"
+    );
+}
         
 
         // =========================
@@ -2745,7 +2770,7 @@ setInterval(async () => {
         const currentUser = JSON.parse(savedUser);
 
         const response = await fetch(
-            `https://parking-management-system-production-7ce8.up.railway.app/api/parking?user_id=${currentUser.id}`
+            `${API_BASE_URL}/api/parking?user_id=${currentUser.id}`
         );
 
         const result = await response.json();

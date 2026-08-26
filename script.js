@@ -647,7 +647,7 @@ function loadAvailableSlots() {
 
 vehicleEntryForm.addEventListener(
     "submit",
-    function(event) {
+    async function(event) {
 
         event.preventDefault();
 
@@ -913,143 +913,64 @@ if (!slot) {
 
 
         // =========================
-        // SAVE DATA
+        // SAVE TO DATABASE FIRST
         // =========================
 
-        parkingData.push(
-            newVehicle
-        );
+        const savedUser =
+            localStorage.getItem("parkEaseUser");
 
-
-        localStorage.setItem(
-            "parkingData",
-            JSON.stringify(
-                parkingData
-            )
-        );
-        // =========================
-// SAVE TO DATABASE
-// =========================
-
-const savedUser =
-    localStorage.getItem("parkEaseUser");
-
-if (!savedUser) {
-
-    console.error("❌ User not logged in.");
-
-} else {
-
-    const currentUser =
-        JSON.parse(savedUser);
-
-    fetch(`${API_BASE_URL}/api/parking`, {
-
-        method: "POST",
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-
-            user_id: currentUser.id,
-
-            receipt_id:
-                "REC-" + newVehicle.id,
-
-            vehicle_number:
-                newVehicle.vehicleNumber,
-
-            owner_name:
-                newVehicle.ownerName,
-
-            vehicle_type:
-                newVehicle.vehicleType,
-
-            slot:
-                newVehicle.slot,
-
-            entry_time:
-                newVehicle.entryTime,
-
-            exit_time:
-                null,
-
-            duration:
-                "",
-
-            parking_fee:
-                0,
-
-            status:
-                "Parked"
-
-        })
-
-    })
-
-    .then(async response => {
-        const data = await response.json();
-
-        if (!response.ok || !data.success) {
-            throw new Error(data.message || "Vehicle could not be saved");
+        if (!savedUser) {
+            showEntryMessage("Please log in again.", "error");
+            return;
         }
 
-        return data;
-    })
+        try {
+            const currentUser = JSON.parse(savedUser);
 
-    .then(data => {
+            const response = await fetch(`${API_BASE_URL}/api/parking`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    user_id: currentUser.id,
+                    receipt_id: "REC-" + newVehicle.id,
+                    vehicle_number: newVehicle.vehicleNumber,
+                    owner_name: newVehicle.ownerName,
+                    vehicle_type: newVehicle.vehicleType,
+                    slot: newVehicle.slot,
+                    // ISO format works reliably with the MySQL date converter.
+                    entry_time: new Date().toISOString(),
+                    exit_time: null,
+                    duration: "",
+                    parking_fee: 0,
+                    status: "Parked"
+                })
+            });
 
-        // Use the MySQL record ID for later vehicle-exit updates.
-        newVehicle.id = data.id;
+            const data = await response.json();
 
-        localStorage.setItem(
-            "parkingData",
-            JSON.stringify(parkingData)
-        );
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || "Vehicle could not be saved");
+            }
 
-        console.log(
-            "✅ Database response:",
-            data
-        );
+            // Only show the entry after MySQL confirms it was saved.
+            newVehicle.id = data.id;
+            parkingData.push(newVehicle);
 
-    })
+            localStorage.setItem(
+                "parkingData",
+                JSON.stringify(parkingData)
+            );
 
-    .catch(error => {
-
-        console.error(
-            "❌ Database error:",
-            error
-        );
-
-        // Do not leave a temporary browser-only record on screen when
-        // MySQL did not save it. Otherwise it disappears after refresh.
-        const recordIndex = parkingData.indexOf(newVehicle);
-
-        if (recordIndex !== -1) {
-            parkingData.splice(recordIndex, 1);
+        } catch (error) {
+            console.error("❌ Database error:", error);
+            showEntryMessage(
+                error.message || "Vehicle could not be saved. Please try again.",
+                "error"
+            );
+            return;
         }
-
-        localStorage.setItem(
-            "parkingData",
-            JSON.stringify(parkingData)
-        );
-
-        displaySlots();
-        displayRecentParking();
-        loadAvailableSlots();
-        updateStats();
-        displayHistory();
-
-        showEntryMessage(
-            error.message || "Vehicle could not be saved. Please try again.",
-            "error"
-        );
-
-    });
-
-}
 
 
         // =========================

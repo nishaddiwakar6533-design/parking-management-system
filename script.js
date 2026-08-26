@@ -25,6 +25,12 @@ let parkingData = [];
 const API_BASE_URL =
     "https://parking-management-system-production-7ce8.up.railway.app";
 
+function isVehicleParked(vehicle) {
+    return String(vehicle.status || "")
+        .trim()
+        .toLowerCase() === "parked";
+}
+
 // =========================
 // LOAD PARKING DATA FROM DATABASE
 // =========================
@@ -142,7 +148,7 @@ function displaySlots() {
     parkingData.find(
         item =>
             item.slot === slotNumber &&
-            item.status === "Parked"
+            isVehicleParked(item)
     );
 
         const slot =
@@ -200,7 +206,7 @@ function updateStats() {
     const occupied =
         parkingData.filter(
             item =>
-                item.status === "Parked"
+            isVehicleParked(item)
         ).length;
 
 
@@ -962,6 +968,10 @@ if (!slot) {
                 "parkingData",
                 JSON.stringify(parkingData)
             );
+
+            // Reload from MySQL so the parking grid always reflects the
+            // database-confirmed slot state immediately after a new entry.
+            await loadParkingData();
 
         } catch (error) {
             console.error("❌ Database error:", error);

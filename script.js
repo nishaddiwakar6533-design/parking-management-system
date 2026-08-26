@@ -2777,6 +2777,14 @@ if (statsSection) {
 // INITIALIZE DATABASE DATA
 // =========================
 
+// Populate the form immediately. The database refresh below will replace
+// this with the latest occupied-slot data when it finishes.
+displaySlots();
+displayRecentParking();
+loadAvailableSlots();
+updateStats();
+displayHistory();
+
 loadParkingData();
 // =========================
 // AUTO SYNC DATABASE

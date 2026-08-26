@@ -35,6 +35,9 @@ const loginForm =
 const loginMessage =
     document.getElementById("loginMessage");
 
+const API_BASE_URL =
+    "https://parking-management-system-production-7ce8.up.railway.app";
+
 loginForm.addEventListener(
     "submit",
     async (event) => {
@@ -69,7 +72,7 @@ loginForm.addEventListener(
 
             const response =
                 await fetch(
-                    "https://parking-management-system-production-7ce8.up.railway.app/api/auth/login",
+                    `${API_BASE_URL}/api/auth/login`,
                     {
                         method: "POST",
 
@@ -302,7 +305,7 @@ if (registerForm) {
 
             const response =
                 await fetch(
-                    "http://10.131.50.69:3000/api/auth/register",
+                    `${API_BASE_URL}/api/auth/register`,
                     {
                         method: "POST",
 

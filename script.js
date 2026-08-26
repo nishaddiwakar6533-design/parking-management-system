@@ -1023,6 +1023,30 @@ if (!savedUser) {
             error
         );
 
+        // Do not leave a temporary browser-only record on screen when
+        // MySQL did not save it. Otherwise it disappears after refresh.
+        const recordIndex = parkingData.indexOf(newVehicle);
+
+        if (recordIndex !== -1) {
+            parkingData.splice(recordIndex, 1);
+        }
+
+        localStorage.setItem(
+            "parkingData",
+            JSON.stringify(parkingData)
+        );
+
+        displaySlots();
+        displayRecentParking();
+        loadAvailableSlots();
+        updateStats();
+        displayHistory();
+
+        showEntryMessage(
+            error.message || "Vehicle could not be saved. Please try again.",
+            "error"
+        );
+
     });
 
 }

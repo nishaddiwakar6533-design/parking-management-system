@@ -366,7 +366,7 @@ if (parkingAlert) {
     }
 
     // Update full slot status page
-displayFullSlots();
+
 
 }
 }

@@ -249,6 +249,33 @@ function updateStats() {
         availableElement.textContent =
             available;
     }
+    // =========================
+// UPDATE SLOT STATUS SUMMARY
+// =========================
+
+const slotTotalElement =
+    document.getElementById("slotTotal");
+
+const slotOccupiedElement =
+    document.getElementById("slotOccupied");
+
+const slotAvailableElement =
+    document.getElementById("slotAvailable");
+
+if (slotTotalElement) {
+    slotTotalElement.textContent =
+        totalSlots;
+}
+
+if (slotOccupiedElement) {
+    slotOccupiedElement.textContent =
+        occupied;
+}
+
+if (slotAvailableElement) {
+    slotAvailableElement.textContent =
+        available;
+}
 
 
     // =========================

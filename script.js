@@ -365,6 +365,9 @@ if (parkingAlert) {
 
     }
 
+    // Update full slot status page
+displayFullSlots();
+
 }
 }
     
@@ -941,6 +944,13 @@ if (!slot) {
                 body: JSON.stringify({
                     user_id: currentUser.id,
                     receipt_id: "REC-" + newVehicle.id,
+
+
+
+
+
+
+
                     vehicle_number: newVehicle.vehicleNumber,
                     owner_name: newVehicle.ownerName,
                     vehicle_type: newVehicle.vehicleType,
@@ -1745,6 +1755,99 @@ const sections = [
     "historySection"
 ];
 
+// =========================
+// FULL PARKING SLOT STATUS
+// =========================
+
+function displayFullSlots() {
+
+    const fullSlots =
+        document.getElementById("fullSlots");
+
+    if (!fullSlots) return;
+
+    fullSlots.innerHTML = "";
+
+    let occupied = 0;
+
+    for (let i = 1; i <= totalSlots; i++) {
+
+        const slotNumber =
+            "P" + String(i).padStart(2, "0");
+
+        const vehicle =
+            parkingData.find(
+                item =>
+                    item.slot === slotNumber &&
+                    isVehicleParked(item)
+            );
+
+        const slot =
+            document.createElement("div");
+
+        if (vehicle) {
+
+            occupied++;
+
+            slot.className = "slot occupied";
+
+            slot.innerHTML = `
+                <div class="slot-number">
+                    ${slotNumber}
+                </div>
+
+                <div class="slot-status">
+                    🚗 Occupied
+                </div>
+
+                <div class="slot-vehicle">
+                    ${vehicle.vehicleNumber}
+                </div>
+            `;
+
+        } else {
+
+            slot.className = "slot available";
+
+            slot.innerHTML = `
+                <div class="slot-number">
+                    ${slotNumber}
+                </div>
+
+                <div class="slot-status">
+                    ✓ Available
+                </div>
+            `;
+        }
+
+        fullSlots.appendChild(slot);
+    }
+
+    const available =
+        totalSlots - occupied;
+
+    // Update Slot Status summary
+    const slotTotal =
+        document.getElementById("slotTotal");
+
+    const slotOccupied =
+        document.getElementById("slotOccupied");
+
+    const slotAvailable =
+        document.getElementById("slotAvailable");
+
+    if (slotTotal) {
+        slotTotal.textContent = totalSlots;
+    }
+
+    if (slotOccupied) {
+        slotOccupied.textContent = occupied;
+    }
+
+    if (slotAvailable) {
+        slotAvailable.textContent = available;
+    }
+}
 
 function showSection(sectionId) {
 

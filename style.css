@@ -2865,3 +2865,65 @@ td strong {
         text-align: left;
     }
 }
+/* =========================
+   VEHICLE EXIT BUTTON
+   ========================= */
+
+#completeExitBtn.exit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    width: 100%;
+    max-width: 280px;
+
+    margin: 24px auto 5px;
+
+    padding: 13px 22px;
+
+    border: none;
+    border-radius: 10px;
+
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.2;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+/* Button icon */
+#completeExitBtn.exit-btn .modern-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* Hover */
+#completeExitBtn.exit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+}
+
+/* Click */
+#completeExitBtn.exit-btn:active {
+    transform: translateY(0);
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+
+    #completeExitBtn.exit-btn {
+        width: 100%;
+        max-width: none;
+        margin-top: 20px;
+    }
+
+}

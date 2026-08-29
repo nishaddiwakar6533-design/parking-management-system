@@ -1,4 +1,14 @@
 // =========================
+// LOGIN PROTECTION
+// =========================
+
+const isLoggedIn =
+    localStorage.getItem("parkEaseLoggedIn");
+
+if (isLoggedIn !== "true") {
+    window.location.href = "login.html";
+}
+// =========================
 // CURRENT DATE
 // =========================
 

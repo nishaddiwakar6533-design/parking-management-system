@@ -9,19 +9,41 @@ if (isLoggedIn !== "true") {
     window.location.href = "login.html";
 }
 // =========================
-// CURRENT DATE
+// CURRENT DATE & TIME
 // =========================
 
 const currentDate = document.getElementById("currentDate");
+const currentTime = document.getElementById("currentTime");
 
-const today = new Date();
+function updateDateTime() {
 
-currentDate.textContent =
-    today.toLocaleDateString("en-IN", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric"
-    });
+    const now = new Date();
+
+    if (currentDate) {
+        currentDate.textContent =
+            now.toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            });
+    }
+
+    if (currentTime) {
+        currentTime.textContent =
+            now.toLocaleTimeString("en-IN", {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: true
+            });
+    }
+}
+
+// First update
+updateDateTime();
+
+// Update every second
+setInterval(updateDateTime, 1000);
 
 
 // =========================
@@ -1376,83 +1398,92 @@ const fee =
 // PARSE ENTRY TIME
 // =========================
 
-function parseEntryTime(
-    entryTime
-) {
+function parseEntryTime(entryTime) {
 
-    /*
-       entryTime hamare system se
-       is format mein save hota hai:
-
-       12 Aug 2026, 10:30 pm
-    */
-
-    const parts =
-        entryTime.match(
-            /(\d{2})\s(\w{3})\s(\d{4}),\s(\d{1,2}):(\d{2})\s(AM|PM)/i
-        );
-
-
-    if (!parts) {
-
-        // Fallback
+    if (!entryTime) {
         return new Date();
     }
 
+    // ---------------------------------
+    // 1. Database ISO format
+    // Example:
+    // 2026-08-27T06:09:46.000Z
+    // ---------------------------------
 
-    const day =
-        parseInt(parts[1]);
+    if (
+        typeof entryTime === "string" &&
+        entryTime.includes("T")
+    ) {
+        const isoDate = new Date(entryTime);
 
-    const monthText =
-        parts[2];
-
-    const year =
-        parseInt(parts[3]);
-
-    let hour =
-        parseInt(parts[4]);
-
-    const minute =
-        parseInt(parts[5]);
-
-    const ampm =
-        parts[6].toUpperCase();
-
-
-    const months = {
-
-        Jan: 0,
-        Feb: 1,
-        Mar: 2,
-        Apr: 3,
-        May: 4,
-        Jun: 5,
-        Jul: 6,
-        Aug: 7,
-        Sep: 8,
-        Oct: 9,
-        Nov: 10,
-        Dec: 11
-
-    };
-
-
-    if (ampm === "PM" && hour !== 12) {
-        hour += 12;
+        if (!isNaN(isoDate.getTime())) {
+            return isoDate;
+        }
     }
 
-    if (ampm === "AM" && hour === 12) {
-        hour = 0;
-    }
+    // ---------------------------------
+    // 2. Display format
+    // Example:
+    // 27 Aug 2026, 06:09 AM
+    // ---------------------------------
 
-
-    return new Date(
-        year,
-        months[monthText],
-        day,
-        hour,
-        minute
+    const parts = entryTime.match(
+        /(\d{2})\s(\w{3})\s(\d{4}),\s(\d{1,2}):(\d{2})\s(AM|PM)/i
     );
+
+    if (parts) {
+
+        const day = parseInt(parts[1]);
+        const monthText = parts[2];
+        const year = parseInt(parts[3]);
+
+        let hour = parseInt(parts[4]);
+        const minute = parseInt(parts[5]);
+
+        const ampm = parts[6].toUpperCase();
+
+        const months = {
+            Jan: 0,
+            Feb: 1,
+            Mar: 2,
+            Apr: 3,
+            May: 4,
+            Jun: 5,
+            Jul: 6,
+            Aug: 7,
+            Sep: 8,
+            Oct: 9,
+            Nov: 10,
+            Dec: 11
+        };
+
+        if (ampm === "PM" && hour !== 12) {
+            hour += 12;
+        }
+
+        if (ampm === "AM" && hour === 12) {
+            hour = 0;
+        }
+
+        return new Date(
+            year,
+            months[monthText],
+            day,
+            hour,
+            minute
+        );
+    }
+
+    // ---------------------------------
+    // 3. Last fallback
+    // ---------------------------------
+
+    console.error(
+        "Invalid entry time:",
+        entryTime
+    );
+
+    return new Date();
 }
 
 
